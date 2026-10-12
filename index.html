@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>면접 질문 유형 탐색 서비스</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="show-annotations min-h-screen text-gray-900">
+    <header class="sticky top-0 z-40 bg-white border-b-2 border-black px-4 py-3 shadow-sm">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-layer-group text-lg"></i>
+                <h1 class="font-bold text-sm">면접 질문 유형 탐색</h1>
+            </div>
+            <button id="annoToggleBtn" onclick="toggleAnnotations()" class="text-xs px-2 py-1 border border-black bg-gray-100 rounded">
+                <span id="annoToggleText">주석 ON</span>
+            </button>
+        </div>
+    </header>
 
+    <main class="max-w-md mx-auto p-4 pb-24">
+        <section id="screen-home" class="space-y-5">
+            <div class="wf-box p-4 relative">
+                <h2 class="text-xl font-black mb-1">나만의 AI 면접 질문 생성기</h2>
+                <p class="text-xs text-gray-600">직무와 채용 공고(JD)를 입력하면 핵심 면접 질문을 도출합니다.</p>
+            </div>
+            <div class="wf-box p-4 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold mb-1">직무 분야 (Category)</label>
+                    <select id="home-job-category" class="wf-input w-full text-sm">
+                        <option value="Frontend">프론트엔드 개발자</option>
+                        <option value="Backend">백엔드 개발자</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">지원 기업명</label>
+                    <input type="text" id="home-company-name" value="네이버" class="wf-input w-full text-sm">
+                </div>
+                <button onclick="generateAIQuestions()" class="wf-btn-dark w-full py-3 text-sm">
+                    AI 면접 질문 생성하기
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
