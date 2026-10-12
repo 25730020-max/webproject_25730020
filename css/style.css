@@ -1,0 +1,46 @@
+/* Custom Wireframe Stylesheet */
+body {
+    background-color: #f3f4f6;
+    color: #111111;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.wf-box {
+    border: 2px solid #222222;
+    background-color: #ffffff;
+    box-shadow: 3px 3px 0px #222222;
+}
+
+.wf-box-dashed {
+    border: 2px dashed #666666;
+    background-color: #ffffff;
+}
+
+.wf-btn {
+    border: 2px solid #222222;
+    background-color: #ffffff;
+    font-weight: 600;
+    box-shadow: 2px 2px 0px #222222;
+}
+
+.wf-btn-dark {
+    border: 2px solid #222222;
+    background-color: #222222;
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 2px 2px 0px #666666;
+}
+
+.wf-tag {
+    border: 1px solid #333333;
+    background-color: #e5e7eb;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    font-weight: 600;
+}
+
+.wf-input {
+    border: 2px solid #333333;
+    background-color: #ffffff;
+    padding: 8px 12px;
+}
