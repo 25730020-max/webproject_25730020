@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>면접 질문 유형 탐색 서비스</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #e5e7eb;
+            color: #1f2937;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .wf-container {
+            max-width: 430px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-left: 1px solid #d1d5db;
+            border-right: 1px solid #d1d5db;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .wf-box {
+            border: 2px solid #374151;
+            background-color: #ffffff;
+            box-shadow: 3px 3px 0px #374151;
+            border-radius: 6px;
+        }
+
+        .wf-box-dashed {
+            border: 2px dashed #9ca3af;
+            background-color: #f9fafb;
+            border-radius: 6px;
+        }
+
+        .wf-btn-dark {
+            background-color: #1f2937;
+            color: #ffffff;
+            border: 2px solid #1f2937;
+            border-radius: 6px;
+            font-weight: 700;
+            box-shadow: 2px 2px 0px #4b5563;
+            transition: all 0.1s ease;
+        }
+
+        .wf-btn-dark:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #4b5563;
+        }
+
+        .wf-btn-outline {
+            background-color: #ffffff;
+            color: #1f2937;
+            border: 2px solid #374151;
+            border-radius: 6px;
+            font-weight: 700;
+            box-shadow: 2px 2px 0px #374151;
+            transition: all 0.1s ease;
+        }
+
+        .wf-btn-outline:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #374151;
+        }
+
+        .wf-input {
+            border: 2px solid #4b5563;
+            background-color: #ffffff;
+            border-radius: 6px;
+            padding: 8px 12px;
+            outline: none;
+        }
+
+        .wf-tag {
+            background-color: #e5e7eb;
+            border: 1px solid #6b7280;
+            color: #1f2937;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .subtab-active {
+            background-color: #1f2937;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .subtab-inactive {
+            background-color: #f3f4f6;
+            color: #4b5563;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <div class="wf-container">
+
+        <!-- STICKY HEADER -->
+        <header class="sticky top-0 z-40 bg-white border-b-2 border-gray-800 px-4 py-3 shadow-sm">
+            <div class="flex items-center justify-between">
+                <!-- Logo click routes to main home -->
+                <button onclick="switchTab('home')" class="flex items-center space-x-2 text-left hover:opacity-80 transition-opacity">
+                    <i class="fa-solid fa-layer-group text-gray-800 text-lg"></i>
+                    <h1 class="font-extrabold text-sm tracking-tight text-gray-900">면접 질문 유형 탐색</h1>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 p-4 pb-24 space-y-5 overflow-y-auto" id="main-content">
+
+            <!-- PAGE 1: HOME SCREEN -->
+            <section id="screen-home" class="space-y-4">
+                <div class="wf-box p-4 space-y-1">
+                    <h2 class="text-lg font-black text-gray-900">나만의 AI 면접 질문 생성기</h2>
+                    <p class="text-xs text-gray-600">직무와 채용 공고(JD)를 입력하면 대표 질문 세트를 도출합니다.</p>
+                </div>
+
+                <div class="wf-box p-4 space-y-4">
+                    <h3 class="font-bold text-xs border-b-2 border-gray-800 pb-2 text-gray-800 flex items-center justify-between">
+                        <span><i class="fa-regular fa-pen-to-square mr-1"></i> 질문 생성 조건 입력</span>
+                    </h3>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-xs font-bold text-gray-700">직무 분야 (Category)</label>
+                            <span class="text-[10px] text-red-600 font-bold">*필수입력</span>
+                        </div>
+                        <select id="input-category" class="wf-input w-full text-xs font-semibold">
+                            <option value="Frontend">프론트엔드 개발자 (Frontend)</option>
+                            <option value="Backend">백엔드 개발자 (Backend)</option>
+                            <option value="AI/Data">AI / 데이터 엔지니어</option>
+                            <option value="PM">서비스 기획 / PM</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-xs font-bold text-gray-700">지원 기업명 (Target Company)</label>
+                            <span class="text-[10px] text-red-600 font-bold">*필수입력</span>
+                        </div>
+                        <input type="text" id="input-company" value="네이버" placeholder="예: 네이버, 카카오" class="wf-input w-full text-xs font-semibold">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">채용 공고 (JD) 요약 내용</label>
+                        <textarea id="input-jd" rows="3" class="wf-input w-full text-xs font-mono" placeholder="공고 주요 역량 및 우대사항...">React, TypeScript, 상태 관리 라이브러리 활용 경험 및 프론트엔드 성능 최적화 경험</textarea>
+                    </div>
+
+                    <button onclick="handleGenerateQuestions()" class="wf-btn-dark w-full py-3 text-xs flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>AI 면접 질문 세트 생성하기</span>
+                    </button>
+                </div>
+
+                <!-- RECENT SINGLE QUESTIONS SECTION -->
+                <div class="wf-box-dashed p-3 space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold text-gray-700"><i class="fa-regular fa-comments mr-1"></i>최근 한 질문 세트 기록</span>
+                        <button onclick="switchTab('history')" class="text-[11px] font-bold text-gray-800 underline flex items-center">
+                            전체보기 <i class="fa-solid fa-angle-right ml-1 text-[10px]"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-2" id="home-recent-questions-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE: RECENT QUESTION HISTORY LIST -->
+            <section id="screen-history" class="space-y-4 hidden">
+                <div class="wf-box p-3 space-y-1">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-base font-black text-gray-900"><i class="fa-solid fa-clock-rotate-left mr-1.5"></i>최근 한 질문 기록</h2>
+                        <button onclick="switchTab('home')" class="text-xs font-bold text-gray-600 underline">홈으로</button>
+                    </div>
+                    <p class="text-xs text-gray-600">생성했거나 확인했던 질문 세트별 기록입니다. 누르면 해당 질문 세트 생성 결과를 확인할 수 있습니다.</p>
+                </div>
+
+                <div class="space-y-2.5" id="history-list-container">
+                    <!-- Populated dynamically -->
+                </div>
+            </section>
+
+            <!-- PAGE 2: GENERATION RESULT SCREEN (CARD LIST BY CATEGORY) -->
+            <section id="screen-result" class="space-y-4 hidden">
+                <div class="wf-box p-3 space-y-2 bg-gray-50 relative">
+                    <button onclick="navigateBackFromResult()" class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 font-bold text-sm">
+                        <i class="fa-solid fa-xmark"></i> 나가기
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <span class="wf-tag" id="result-tag-category">Frontend</span>
+                    </div>
+                    <h2 class="text-base font-black text-gray-900" id="result-title">네이버 면접 질문 생성 결과</h2>
+                    <p class="text-xs text-gray-500">생성된 질문을 확인하고 마이페이지 보관함에 저장해보세요.</p>
+                </div>
+
+                <!-- Question Cards by Type -->
+                <div class="space-y-3" id="result-cards-container">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Bottom Action Controls -->
+                <div class="space-y-2 pt-2">
+                    <button id="btn-save-result" onclick="toggleSaveCurrentSet()" class="wf-btn-dark w-full py-3 text-xs flex items-center justify-center space-x-2">
+                        <i id="icon-bookmark-result" class="fa-regular fa-bookmark"></i>
+                        <span id="label-save-result">질문 세트 마이페이지에 저장</span>
+                    </button>
+                    <div class="flex space-x-2">
+                        <button onclick="handleGenerateQuestions()" class="wf-btn-outline flex-1 py-2.5 text-xs flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-rotate mr-1"></i>
+                            <span>다시 생성</span>
+                        </button>
+                        <button onclick="switchTab('practice')" class="wf-btn-outline flex-1 py-2.5 text-xs flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-circle-play mr-1"></i>
+                            <span>바로 연습</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE 3: MOCK INTERVIEW FLASHCARD SCREEN -->
+            <section id="screen-practice" class="space-y-4 hidden">
+                <div class="wf-box p-3 space-y-2 relative">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-base font-black text-gray-900"><i class="fa-solid fa-comments mr-1.5"></i>모의면접 플래시카드</h2>
+                        <!-- Practice Exit Button -->
+                        <button onclick="exitPracticeMode()" class="text-xs font-bold text-gray-600 hover:text-gray-900 border border-gray-400 px-2 py-0.5 rounded bg-gray-100">
+                            <i class="fa-solid fa-arrow-left mr-1"></i>나가기
+                        </button>
+                    </div>
+                    
+                    <!-- Question Set Selector for Mock Interview (Select from Mypage Saved Sets) -->
+                    <div class="space-y-1 pt-1">
+                        <label class="block text-[11px] font-bold text-gray-700 flex items-center justify-between">
+                            <span><i class="fa-solid fa-list-check mr-1"></i>마이페이지 저장 질문 세트 선택</span>
+                            <span class="text-[10px] text-gray-500 font-normal">보관함 세트 선택 가능</span>
+                        </label>
+                        <select id="practice-set-select" onchange="handlePracticeSetChange(this.value)" class="wf-input w-full text-xs font-semibold bg-white">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Flashcard Viewport -->
+                <div class="wf-box p-5 space-y-4 text-center relative select-none cursor-pointer" id="flashcard-container" onclick="flipFlashcard()">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="wf-tag" id="fc-badge-type">질문 카드</span>
+                        <span class="font-bold text-gray-500" id="fc-side-label">FRONT (질문)</span>
+                    </div>
+
+                    <div class="min-h-[140px] flex items-center justify-center p-2">
+                        <p class="font-bold text-sm leading-relaxed text-gray-900" id="fc-main-text">
+                            질문을 불러오는 중입니다...
+                        </p>
+                    </div>
+
+                    <div class="border-t border-gray-300 pt-2 flex justify-between items-center text-[11px] text-gray-500">
+                        <span><i class="fa-solid fa-rotate mr-1"></i>클릭하여 뒤집기</span>
+                        <span id="fc-counter-label">1 / 5</span>
+                    </div>
+                </div>
+
+                <!-- Answer Guide / Quick Note Area -->
+                <div class="wf-box p-3 space-y-2 bg-gray-50">
+                    <label class="block text-xs font-bold text-gray-800 flex justify-between items-center">
+                        <span><i class="fa-regular fa-pen-to-square mr-1"></i>이 질문의 답변 방향 메모</span>
+                        <span class="text-[10px] text-gray-500">자동 저장</span>
+                    </label>
+                    <textarea id="fc-memo-input" rows="3" oninput="saveCurrentCardMemo()" placeholder="답변에 들어갈 핵심 키워드나 경험 요약을 적어두세요..." class="wf-input w-full text-xs font-mono"></textarea>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex justify-between space-x-2">
+                    <button onclick="prevFlashcard()" class="wf-btn-outline flex-1 py-2 text-xs flex items-center justify-center space-x-1">
+                        <i class="fa-solid fa-chevron-left"></i>
+                        <span>이전 질문</span>
+                    </button>
+                    <button onclick="nextFlashcard()" class="wf-btn-dark flex-1 py-2 text-xs flex items-center justify-center space-x-1">
+                        <span>다음 질문</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- PAGE 4: MY PAGE SCREEN (WITH REFACTORED SUBTABS) -->
+            <section id="screen-my" class="space-y-4 hidden">
+                <div class="wf-box p-3 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-base font-black text-gray-900"><i class="fa-solid fa-user-gear mr-1.5"></i>마이페이지</h2>
+                        <!-- State Test Toggle -->
+                        <div class="flex items-center space-x-1 border border-gray-400 bg-gray-100 p-1 rounded">
+                            <span class="text-[10px] font-bold text-gray-600">상태:</span>
+                            <button onclick="setSavedQuestionsState(true)" id="btn-state-data" class="px-1.5 py-0.5 text-[10px] font-bold bg-gray-800 text-white rounded">저장됨</button>
+                            <button onclick="setSavedQuestionsState(false)" id="btn-state-empty" class="px-1.5 py-0.5 text-[10px] font-bold bg-gray-200 text-gray-700 rounded">저장없음</button>
+                        </div>
+                    </div>
+
+                    <!-- MY PAGE TOP LEVEL SUBTAB SWITCHER -->
+                    <div class="grid grid-cols-2 border-2 border-gray-800 rounded overflow-hidden text-xs text-center font-bold">
+                        <button id="subtab-btn-sets" onclick="switchMySubtab('sets')" class="py-2 border-r border-gray-800 subtab-active">
+                            <i class="fa-solid fa-box-archive mr-1"></i>저장된 질문 세트
+                        </button>
+                        <button id="subtab-btn-categories" onclick="switchMySubtab('categories')" class="py-2 subtab-inactive">
+                            <i class="fa-solid fa-folder-tree mr-1"></i>질문 목록
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SUBTAB 1: SAVED QUESTION SETS (저장된 질문 세트) -->
+                <div id="my-view-sets" class="space-y-3">
+                    <div class="flex justify-between items-center px-1">
+                        <h3 class="font-extrabold text-xs text-gray-900 flex items-center">
+                            <i class="fa-solid fa-bookmark mr-1.5 text-gray-700"></i>저장된 질문 세트 목록
+                        </h3>
+                        <!-- Saved Sets Sort Option: Recent / Oldest -->
+                        <div class="flex items-center space-x-1">
+                            <span class="text-[10px] text-gray-500 font-bold">정렬:</span>
+                            <select id="sort-sets-select" onchange="handleSetsSortChange(this.value)" class="text-[10px] wf-input py-0.5 px-1 font-bold">
+                                <option value="recent">최근순</option>
+                                <option value="oldest">과거순</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- DATA EXISTS -->
+                    <div id="saved-data-container" class="space-y-3">
+                        <!-- Populated Dynamically with Keywords + Toggleable Question List -->
+                    </div>
+
+                    <!-- EMPTY STATE -->
+                    <div id="saved-empty-container" class="wf-box p-8 text-center space-y-4 hidden">
+                        <div class="w-12 h-12 bg-gray-200 border-2 border-gray-400 rounded-full flex items-center justify-center mx-auto text-gray-600">
+                            <i class="fa-regular fa-folder-open text-xl"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="font-bold text-sm text-gray-800">저장된 면접 질문 세트가 없습니다.</p>
+                            <p class="text-xs text-gray-500">AI를 통해 나만의 면접 질문을 만들어 보세요!</p>
+                        </div>
+                        <button onclick="switchTab('home')" class="wf-btn-dark px-5 py-2.5 text-xs inline-flex items-center space-x-1.5">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>[ 질문 생성하러 가기 ]</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SUBTAB 2: QUESTION LIST CATEGORIES (질문 목록) -->
+                <div id="my-view-categories" class="space-y-3 hidden">
+                    
+                    <!-- INNER TOGGLE FOR CATEGORIES: [기업/직무] vs [지정 목록] -->
+                    <div class="flex items-center justify-between bg-gray-100 p-1.5 border border-gray-300 rounded text-xs">
+                        <div class="flex space-x-1 w-full">
+                            <button id="cat-inner-btn-auto" onclick="switchCategoryInnerView('auto')" class="flex-1 py-1.5 text-center font-bold text-xs rounded bg-gray-900 text-white shadow-sm">
+                                <i class="fa-solid fa-building mr-1"></i>기업 / 직무 (자동)
+                            </button>
+                            <button id="cat-inner-btn-custom" onclick="switchCategoryInnerView('custom')" class="flex-1 py-1.5 text-center font-bold text-xs rounded bg-white text-gray-700 border border-gray-300">
+                                <i class="fa-solid fa-sliders mr-1"></i>지정 목록 (커스텀)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- VIEW A: AUTO JOB/COMPANY CATEGORIES (NO SORT SELECT) -->
+                    <div id="cat-inner-auto-section" class="space-y-3">
+                        <div class="wf-box p-3 space-y-2 bg-gray-50">
+                            <div class="flex justify-between items-center border-b border-gray-300 pb-1.5">
+                                <h4 class="font-bold text-xs text-gray-900 flex items-center">
+                                    <i class="fa-solid fa-robot mr-1.5 text-gray-700"></i>기업 및 직무 분야별 분류
+                                </h4>
+                                <span class="text-[10px] text-gray-500">자동 생성 집합</span>
+                            </div>
+                            <p class="text-[11px] text-gray-600">
+                                생성 조건 입력 시 설정했던 동일 기업 및 직무별 질문 모음입니다.
+                            </p>
+                        </div>
+
+                        <div class="space-y-2.5" id="auto-categories-container">
+                            <!-- Populated Dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- VIEW B: CUSTOM USER CATEGORIES (ORDERED BY RECENTLY EDITED, NO SORT SELECT) -->
+                    <div id="cat-inner-custom-section" class="space-y-3 hidden">
+                        <div class="wf-box p-3 space-y-2 bg-gray-50">
+                            <div class="flex justify-between items-center border-b border-gray-300 pb-1.5">
+                                <h4 class="font-bold text-xs text-gray-900 flex items-center">
+                                    <i class="fa-solid fa-user-pen mr-1.5 text-gray-700"></i>사용자 지정 분류 목록
+                                </h4>
+                                <button onclick="openCreateCustomCategoryModal()" class="wf-btn-dark px-2.5 py-1 text-[10px] flex items-center">
+                                    <i class="fa-solid fa-plus mr-1"></i>새 분류 생성
+                                </button>
+                            </div>
+                            <p class="text-[11px] text-gray-600">
+                                원하는 질문을 직접 엮어 만든 지정 목록입니다. (최근 편집순 자동 정렬)
+                            </p>
+                        </div>
+
+                        <div class="space-y-2.5" id="custom-categories-container">
+                            <!-- Populated Dynamically -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- MODAL: VIEW & EDIT QUESTIONS IN A SET -->
+        <div id="modal-questions-list" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-white border-2 border-gray-800 rounded-lg max-w-[400px] w-full max-h-[85vh] flex flex-col shadow-xl">
+                <div class="p-3 border-b-2 border-gray-800 flex justify-between items-center bg-gray-100">
+                    <div>
+                        <h3 class="font-bold text-xs text-gray-900" id="modal-set-title">질문 세트 목록</h3>
+                        <p class="text-[10px] text-gray-500" id="modal-set-subtitle">질문 내용을 확인하고 수정할 수 있습니다.</p>
+                    </div>
+                    <button onclick="closeQuestionsModal()" class="text-gray-700 hover:text-black font-bold p-1 text-sm">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="p-3 overflow-y-auto flex-1 space-y-3" id="modal-questions-content">
+                    <!-- Populated dynamically -->
+                </div>
+                <div class="p-3 border-t border-gray-300 bg-gray-50 flex justify-end">
+                    <button onclick="closeQuestionsModal()" class="wf-btn-dark px-4 py-1.5 text-xs">확인 / 닫기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: CREATE CUSTOM CATEGORY & SELECT QUESTIONS -->
+        <div id="modal-create-category" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-white border-2 border-gray-800 rounded-lg max-w-[400px] w-full max-h-[85vh] flex flex-col shadow-xl">
+                <div class="p-3 border-b-2 border-gray-800 flex justify-between items-center bg-gray-100">
+                    <h3 class="font-bold text-xs text-gray-900"><i class="fa-solid fa-folder-plus mr-1"></i>새 지정 목록 생성 및 질문 선택</h3>
+                    <button onclick="closeCategoryModal()" class="text-gray-700 hover:text-black font-bold p-1 text-sm">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="p-3 overflow-y-auto flex-1 space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">지정 목록 이름</label>
+                        <input type="text" id="custom-cat-name-input" placeholder="예: 핵심 기술 대비, 임원 면접 모음" class="wf-input w-full text-xs font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">포함할 질문 선택 (저장된 질문 중)</label>
+                        <div class="space-y-2 max-h-[220px] overflow-y-auto border border-gray-300 p-2 rounded bg-gray-50" id="custom-cat-questions-select-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+                <div class="p-3 border-t border-gray-300 bg-gray-50 flex justify-end space-x-2">
+                    <button onclick="closeCategoryModal()" class="wf-btn-outline px-3 py-1.5 text-xs">취소</button>
+                    <button onclick="saveCustomCategory()" class="wf-btn-dark px-4 py-1.5 text-xs">생성 완료</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FLOATING SCROLL TO TOP BUTTON -->
+        <button id="btn-scroll-top" onclick="scrollToTop()" class="fixed bottom-20 right-4 md:right-[calc(50%-190px)] z-40 w-10 h-10 bg-gray-900 text-white border-2 border-gray-700 shadow-md flex items-center justify-center rounded-full opacity-0 pointer-events-none transition-all duration-300">
+            <i class="fa-solid fa-arrow-up text-sm"></i>
+        </button>
+
+        <!-- STICKY BOTTOM NAVIGATION BAR -->
+        <nav class="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto bg-white border-t-2 border-gray-800 z-50">
+            <div class="grid grid-cols-3 h-16">
+                <!-- TAB 1: HOME -->
+                <button id="nav-btn-home" onclick="switchTab('home')" class="flex flex-col items-center justify-center h-full font-bold text-xs border-t-4 border-gray-900 bg-gray-100 text-gray-900">
+                    <i class="fa-solid fa-house text-base mb-0.5"></i>
+                    <span>홈</span>
+                </button>
+
+                <!-- TAB 2: MOCK INTERVIEW -->
+                <button id="nav-btn-practice" onclick="switchTab('practice')" class="flex flex-col items-center justify-center h-full text-xs text-gray-500 hover:text-gray-900">
+                    <i class="fa-solid fa-comments text-base mb-0.5"></i>
+                    <span>모의면접</span>
+                </button>
+
+                <!-- TAB 3: MY PAGE -->
+                <button id="nav-btn-my" onclick="switchTab('my')" class="flex flex-col items-center justify-center h-full text-xs text-gray-500 hover:text-gray-900">
+                    <i class="fa-solid fa-user text-base mb-0.5"></i>
+                    <span>마이페이지</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- TOAST MESSAGE -->
+        <div id="toast" class="fixed top-16 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-4 py-2 border border-gray-300 shadow-md transition-opacity duration-300 opacity-0 pointer-events-none z-50">
+            알림 메시지
+        </div>
+
+    </div>
+
+    <script>
+        // State Management
+        let appState = {
+            currentTab: 'home',
+            previousTab: 'home',
+            hasSavedData: true,
+            currentJob: 'Frontend',
+            currentCompany: '네이버',
+            isCurrentSetSaved: false,
+
+            // My Page Subtab state: 'sets' | 'categories'
+            mySubtab: 'sets',
+            
+            // Category Inner View state: 'auto' | 'custom'
+            categoryInnerView: 'auto',
+
+            // Expanded Question Lists state in Saved Sets view
+            expandedSetIds: {},
+            
+            // Practice State
+            practiceSetId: 'set_1',
+            flashcardIndex: 0,
+            flashcardFlipped: false,
+
+            // Sets sort state: 'recent' | 'oldest'
+            setsSort: 'recent',
+
+            // Active viewing modal set id
+            activeModalSetId: null,
+
+            // Mock Sets Data
+            savedSets: [
+                {
+                    id: 'set_1',
+                    job: 'Frontend',
+                    company: '네이버',
+                    title: 'Frontend · 네이버',
+                    date: '2026.10.12',
+                    timestamp: 1791800000000,
+                    keywords: ['Virtual DOM', '클로저', 'useMemo', 'TypeScript', 'GraphQL'],
+                    questions: [
+                        { id: 'q_1', q: "Virtual DOM과 Real DOM의 차이점을 설명하고, Diffing 알고리즘의 작동 방식을 말해보세요.", memo: "Virtual DOM 차이점 강조, Batching 업데이트 설명", editing: false },
+                        { id: 'q_2', q: "클로저(Closure)의 정의와 실무 모듈 패턴에서의 활용 사례를 설명해주세요.", memo: "스코프 체인 및 정보 은닉 패턴 정리", editing: false },
+                        { id: 'q_3', q: "React performance 최적화를 위해 useMemo와 useCallback을 사용해야 하는 시점은?", memo: "자식 컴포넌트 리렌더링 방지 및 참조 동일성 유지", editing: false },
+                        { id: 'q_4', q: "TypeScript의 Interface와 Type Alias의 차이점에 대해 말씀해주세요.", memo: "선언 병합 가능 여부 및 확장성 차이", editing: false },
+                        { id: 'q_5', q: "RESTful API와 GraphQL의 장단점을 비교하여 설명해보세요.", memo: "Overfetching / Underfetching 관점 비교", editing: false }
+                    ]
+                },
+                {
+                    id: 'set_2',
+                    job: 'Backend',
+                    company: '카카오',
+                    title: 'Backend · 카카오',
+                    date: '2026.10.08',
+                    timestamp: 1791450000000,
+                    keywords: ['RDBMS/NoSQL', 'ACID', 'Redis', 'Look Aside'],
+                    questions: [
+                        { id: 'q_6', q: "RDBMS와 NoSQL의 차이 및 트랜잭션 ACID 원칙에 대해 설명하세요.", memo: "원자성, 일관성, 격리성, 지속성 예시 준비", editing: false },
+                        { id: 'q_7', q: "Redis를 활용한 캐싱 전략(Look Aside, Write Through)을 설명해주세요.", memo: "읽기/쓰기 빈도에 따른 캐시 패턴 비교", editing: false }
+                    ]
+                }
+            ],
+
+            // User Created Custom Categories (Ordered by recent editedAt)
+            customCategories: [
+                {
+                    id: 'cat_c1',
+                    name: '자주 나오는 핵심 질문',
+                    editedAt: 1791850000000,
+                    createdAt: 1791800000000,
+                    questionIds: ['q_1', 'q_6']
+                },
+                {
+                    id: 'cat_c2',
+                    name: '심화 아키텍처 모음',
+                    editedAt: 1791700000000,
+                    createdAt: 1791500000000,
+                    questionIds: ['q_3', 'q_7']
+                }
+            ],
+
+            // History Records (Unique records by generate/view instance)
+            recentHistorySets: [
+                {
+                    historyId: 'hist_101',
+                    job: 'Frontend',
+                    company: '네이버',
+                    date: '10분 전',
+                    title: 'Frontend · 네이버 세트',
+                    questions: [
+                        { q: "Virtual DOM과 Real DOM의 차이점을 설명하고, Diffing 알고리즘의 작동 방식을 말해보세요." },
+                        { q: "클로저(Closure)의 정의와 실무 모듈 패턴에서의 활용 사례를 설명해주세요." },
+                        { q: "React performance 최적화를 위해 useMemo와 useCallback을 사용해야 하는 시점은?" }
+                    ]
+                },
+                {
+                    historyId: 'hist_102',
+                    job: 'Backend',
+                    company: '카카오',
+                    date: '1시간 전',
+                    title: 'Backend · 카카오 세트',
+                    questions: [
+                        { q: "RDBMS와 NoSQL의 차이 및 트랜잭션 ACID 원칙에 대해 설명하세요." },
+                        { q: "Redis를 활용한 캐싱 전략(Look Aside, Write Through)을 설명해주세요." }
+                    ]
+                },
+                {
+                    historyId: 'hist_103',
+                    job: 'PM',
+                    company: '토스',
+                    date: '어제',
+                    title: '서비스 기획 · 토스 세트',
+                    questions: [
+                        { q: "협업 시 디자인 시스템 표준 정립과 타 부서 의견 조율 방안에 대해 논하세요." },
+                        { q: "A/B 테스트 설계 시 가설 수립 및 주요 지표 설정 노하우는?" }
+                    ]
+                }
+            ]
+        };
+
+        window.onload = function() {
+            renderApp();
+            
+            // Scroll Listener for Scroll-to-Top Button
+            const mainContent = document.getElementById('main-content');
+            window.addEventListener('scroll', handleScroll);
+            mainContent.addEventListener('scroll', handleScroll);
+        };
+
+        function handleScroll() {
+            const btn = document.getElementById('btn-scroll-top');
+            const mainContent = document.getElementById('main-content');
+            if (window.scrollY > 120 || mainContent.scrollTop > 120) {
+                btn.classList.remove('opacity-0', 'pointer-events-none');
+                btn.classList.add('opacity-100');
+            } else {
+                btn.classList.remove('opacity-100');
+                btn.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function switchTab(tabName) {
+            if (appState.currentTab !== tabName) {
+                appState.previousTab = appState.currentTab;
+            }
+            appState.currentTab = tabName;
+
+            document.getElementById('screen-home').classList.toggle('hidden', tabName !== 'home');
+            document.getElementById('screen-history').classList.toggle('hidden', tabName !== 'history');
+            document.getElementById('screen-result').classList.toggle('hidden', tabName !== 'result');
+            document.getElementById('screen-practice').classList.toggle('hidden', tabName !== 'practice');
+            document.getElementById('screen-my').classList.toggle('hidden', tabName !== 'my');
+
+            const homeBtn = document.getElementById('nav-btn-home');
+            const practiceBtn = document.getElementById('nav-btn-practice');
+            const myBtn = document.getElementById('nav-btn-my');
+
+            // Reset tab styles
+            [homeBtn, practiceBtn, myBtn].forEach(btn => {
+                btn.className = "flex flex-col items-center justify-center h-full text-xs text-gray-500 hover:text-gray-900";
+            });
+
+            if (tabName === 'home' || tabName === 'history') {
+                homeBtn.className = "flex flex-col items-center justify-center h-full font-bold text-xs border-t-4 border-gray-900 bg-gray-100 text-gray-900";
+                if (tabName === 'history') renderHistoryScreen();
+            } else if (tabName === 'practice') {
+                practiceBtn.className = "flex flex-col items-center justify-center h-full font-bold text-xs border-t-4 border-gray-900 bg-gray-100 text-gray-900";
+                renderPracticeScreen();
+            } else if (tabName === 'my') {
+                myBtn.className = "flex flex-col items-center justify-center h-full font-bold text-xs border-t-4 border-gray-900 bg-gray-100 text-gray-900";
+                renderMyPage();
+            }
+
+            scrollToTop();
+        }
+
+        function navigateBackFromResult() {
+            switchTab(appState.previousTab || 'home');
+        }
+
+        function exitPracticeMode() {
+            switchTab(appState.previousTab || 'home');
+        }
+
+        // MY PAGE SUBTAB SWITCHER (저장된 질문 세트 vs 질문 목록)
+        function switchMySubtab(subtabName) {
+            appState.mySubtab = subtabName;
+            
+            const setsBtn = document.getElementById('subtab-btn-sets');
+            const catBtn = document.getElementById('subtab-btn-categories');
+            const setsView = document.getElementById('my-view-sets');
+            const catView = document.getElementById('my-view-categories');
+
+            if (subtabName === 'sets') {
+                setsBtn.className = "py-2 border-r border-gray-800 subtab-active";
+                catBtn.className = "py-2 subtab-inactive";
+                setsView.classList.remove('hidden');
+                catView.classList.add('hidden');
+                renderMySavedSets();
+            } else {
+                catBtn.className = "py-2 subtab-active";
+                setsBtn.className = "py-2 border-r border-gray-800 subtab-inactive";
+                catView.classList.remove('hidden');
+                setsView.classList.add('hidden');
+                renderCategoriesView();
+            }
+        }
+
+        // CATEGORY INNER VIEW SWITCHER ([기업/직무] vs [지정 목록])
+        function switchCategoryInnerView(viewType) {
+            appState.categoryInnerView = viewType;
+
+            const autoBtn = document.getElementById('cat-inner-btn-auto');
+            const customBtn = document.getElementById('cat-inner-btn-custom');
+            const autoSec = document.getElementById('cat-inner-auto-section');
+            const customSec = document.getElementById('cat-inner-custom-section');
+
+            if (viewType === 'auto') {
+                autoBtn.className = "flex-1 py-1.5 text-center font-bold text-xs rounded bg-gray-900 text-white shadow-sm";
+                customBtn.className = "flex-1 py-1.5 text-center font-bold text-xs rounded bg-white text-gray-700 border border-gray-300";
+                autoSec.classList.remove('hidden');
+                customSec.classList.add('hidden');
+            } else {
+                customBtn.className = "flex-1 py-1.5 text-center font-bold text-xs rounded bg-gray-900 text-white shadow-sm";
+                autoBtn.className = "flex-1 py-1.5 text-center font-bold text-xs rounded bg-white text-gray-700 border border-gray-300";
+                customSec.classList.remove('hidden');
+                autoSec.classList.add('hidden');
+            }
+            renderCategoriesView();
+        }
+
+        function renderMyPage() {
+            switchMySubtab(appState.mySubtab);
+        }
+
+        // Render Home Screen Recent Questions History List
+        function renderHomeScreen() {
+            const container = document.getElementById('home-recent-questions-list');
+            container.innerHTML = appState.recentHistorySets.slice(0, 3).map(h => `
+                <div onclick="openHistorySetDetail('${h.historyId}')" class="bg-white border border-gray-400 p-2.5 rounded text-xs space-y-1 cursor-pointer hover:bg-gray-50 transition-colors">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-gray-900 block truncate max-w-[220px]">${h.title}</span>
+                        <span class="wf-tag">${h.job}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] text-gray-500">
+                        <span>${h.company} · 질문 ${h.questions.length}개</span>
+                        <span>${h.date}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderHistoryScreen() {
+            const container = document.getElementById('history-list-container');
+            container.innerHTML = appState.recentHistorySets.map(h => `
+                <div onclick="openHistorySetDetail('${h.historyId}')" class="wf-box p-3 space-y-2 cursor-pointer hover:bg-gray-50 transition-colors">
+                    <div class="flex justify-between items-center">
+                        <span class="wf-tag">${h.job}</span>
+                        <span class="text-[10px] text-gray-500">${h.date}</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs text-gray-900">${h.title}</h4>
+                        <p class="text-[11px] text-gray-600 mt-0.5 truncate">대표: Q1. ${h.questions[0] ? h.questions[0].q : ''}</p>
+                    </div>
+                    <div class="flex justify-between items-center pt-1 border-t border-gray-200 text-[11px]">
+                        <span class="text-gray-600 font-semibold">${h.company} 질문 세트 기록</span>
+                        <span class="font-bold text-gray-900 underline flex items-center">
+                            면접 질문 세트 확인하기 <i class="fa-solid fa-angle-right ml-1 text-[10px]"></i>
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Open Detail from History Set Record
+        function openHistorySetDetail(historyId) {
+            const item = appState.recentHistorySets.find(h => h.historyId === historyId);
+            if (!item) return;
+
+            appState.currentJob = item.job;
+            appState.currentCompany = item.company;
+            appState.isCurrentSetSaved = false;
+
+            document.getElementById('result-tag-category').innerText = item.job;
+            document.getElementById('result-title').innerText = `${item.company} 면접 질문 세트 (기록)`;
+
+            const container = document.getElementById('result-cards-container');
+            container.innerHTML = `
+                <div class="wf-box p-3.5 space-y-2">
+                    <h4 class="font-bold text-xs text-gray-800 border-b border-gray-300 pb-1">
+                        <i class="fa-solid fa-clock-rotate-left mr-1"></i>기록에 저장된 면접 질문 목록
+                    </h4>
+                    <div class="space-y-2 pt-1">
+                        ${item.questions.map((q, idx) => `
+                            <div class="p-2 bg-gray-50 border border-gray-200 rounded text-xs text-gray-800 leading-relaxed">
+                                <span class="font-bold text-gray-900 mr-1">Q${idx + 1}.</span>${q.q}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            updateSaveResultButtonState();
+            switchTab('result');
+        }
+
+        // Action: Generate AI Questions
+        function handleGenerateQuestions() {
+            appState.currentJob = document.getElementById('input-category').value;
+            appState.currentCompany = document.getElementById('input-company').value || '지원기업';
+            appState.isCurrentSetSaved = false;
+
+            // Add new distinct record into history list
+            const newHistory = {
+                historyId: 'hist_' + Date.now(),
+                job: appState.currentJob,
+                company: appState.currentCompany,
+                date: '방금 전',
+                title: `${appState.currentJob} · ${appState.currentCompany} 세트`,
+                questions: [
+                    { q: `${appState.currentJob} 핵심 개념 및 실무 적용 방안을 설명해보세요.` },
+                    { q: `${appState.currentCompany} 서비스 특성에 맞춘 성능 최적화 경험이 있나요?` },
+                    { q: "협업 시 갈등이 생겼을 때 해결했던 구체적인 사례를 말씀해주세요." }
+                ]
+            };
+            appState.recentHistorySets.unshift(newHistory);
+            renderHomeScreen();
+
+            updateSaveResultButtonState();
+            showToast(`${appState.currentCompany} (${appState.currentJob}) 질문 세트 생성 완료!`);
+
+            renderResultScreen();
+            switchTab('result');
+        }
+
+        // Render Generated Questions Result View
+        function renderResultScreen() {
+            document.getElementById('result-tag-category').innerText = appState.currentJob;
+            document.getElementById('result-title').innerText = `${appState.currentCompany} 면접 질문 세트`;
+
+            const mockCategorized = [
+                {
+                    type: "직무 / 기술 역량 질문",
+                    questions: [
+                        "Virtual DOM과 Real DOM의 차이점을 설명하고, Diffing 알고리즘의 작동 방식을 말해보세요.",
+                        "TypeScript의 Interface와 Type Alias의 차이점에 대해 말씀해주세요."
+                    ]
+                },
+                {
+                    type: "경험 / 프로젝트 협업 질문",
+                    questions: [
+                        "상태 관리 라이브러리를 도입하여 성능을 개선한 구체적 사례를 기술하세요."
+                    ]
+                }
+            ];
+
+            const container = document.getElementById('result-cards-container');
+            container.innerHTML = mockCategorized.map(cat => `
+                <div class="wf-box p-3.5 space-y-2">
+                    <h4 class="font-bold text-xs text-gray-800 border-b border-gray-300 pb-1">
+                        <i class="fa-solid fa-layer-group text-gray-600 mr-1"></i>${cat.type}
+                    </h4>
+                    <div class="space-y-2 pt-1">
+                        ${cat.questions.map((q, idx) => `
+                            <div class="p-2 bg-gray-50 border border-gray-200 rounded text-xs text-gray-800 leading-relaxed">
+                                <span class="font-bold text-gray-900 mr-1">Q${idx + 1}.</span>${q}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleSaveCurrentSet() {
+            if (!appState.isCurrentSetSaved) {
+                const now = Date.now();
+                const newSet = {
+                    id: 'set_' + now,
+                    job: appState.currentJob,
+                    company: appState.currentCompany,
+                    title: `${appState.currentJob} · ${appState.currentCompany}`,
+                    date: new Date().toISOString().split('T')[0].replace(/-/g, '.'),
+                    timestamp: now,
+                    keywords: ['신규 세트', appState.currentJob, appState.currentCompany],
+                    questions: [
+                        { id: 'q_' + now + '_1', q: "Virtual DOM과 Real DOM의 차이점을 설명해보세요.", memo: "", editing: false },
+                        { id: 'q_' + now + '_2', q: "상태 관리 라이브러리를 활용한 성능 최적화 경험을 기술하세요.", memo: "", editing: false },
+                        { id: 'q_' + now + '_3', q: "타 직군과의 커뮤니케이션 및 갈등 해결 방안을 설명하세요.", memo: "", editing: false }
+                    ]
+                };
+
+                appState.savedSets.unshift(newSet);
+                appState.isCurrentSetSaved = true;
+                setSavedQuestionsState(true);
+                showToast("마이페이지 보관함에 저장되었습니다!");
+            } else {
+                appState.savedSets.shift();
+                appState.isCurrentSetSaved = false;
+                showToast("저장이 취소되었습니다.");
+            }
+            updateSaveResultButtonState();
+        }
+
+        function updateSaveResultButtonState() {
+            const btn = document.getElementById('btn-save-result');
+            const icon = document.getElementById('icon-bookmark-result');
+            const label = document.getElementById('label-save-result');
+
+            if (appState.isCurrentSetSaved) {
+                btn.className = "wf-btn-outline w-full py-3 text-xs flex items-center justify-center space-x-2 bg-gray-100";
+                icon.className = "fa-solid fa-bookmark text-gray-900";
+                label.innerText = "저장됨 (마이페이지에서 확인 가능)";
+            } else {
+                btn.className = "wf-btn-dark w-full py-3 text-xs flex items-center justify-center space-x-2";
+                icon.className = "fa-regular fa-bookmark";
+                label.innerText = "질문 세트 마이페이지에 저장";
+            }
+        }
+
+        // SORT HANDLER FOR SAVED SETS (최근순 / 과거순)
+        function handleSetsSortChange(val) {
+            appState.setsSort = val;
+            renderMySavedSets();
+        }
+
+        // RENDER SUBTAB 1: SAVED QUESTION SETS (질문 목록 미리보기 및 수정 기능)
+        function renderMySavedSets() {
+            const container = document.getElementById('saved-data-container');
+            
+            if (appState.savedSets.length === 0) {
+                setSavedQuestionsState(false);
+                return;
+            }
+
+            // Sort Saved Sets (Recent / Oldest)
+            let sets = [...appState.savedSets];
+            if (appState.setsSort === 'recent') {
+                sets.sort((a, b) => b.timestamp - a.timestamp);
+            } else {
+                sets.sort((a, b) => a.timestamp - b.timestamp);
+            }
+
+            container.innerHTML = sets.map((set) => {
+                const isExpanded = !!appState.expandedSetIds[set.id];
+
+                return `
+                <div class="wf-box p-3.5 space-y-2.5">
+                    <div class="flex justify-between items-start border-b border-gray-300 pb-2">
+                        <div>
+                            <div class="flex items-center space-x-1.5">
+                                <h3 class="font-extrabold text-sm text-gray-900">${set.title}</h3>
+                                <span class="wf-tag">저장: ${set.date}</span>
+                            </div>
+                            <p class="text-[11px] text-gray-500 mt-0.5">포함 질문: 총 ${set.questions.length}개</p>
+                        </div>
+                        <button onclick="deleteQuestionSet('${set.id}')" class="text-xs text-gray-400 hover:text-red-600 font-bold px-1">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+
+                    <!-- Keywords List -->
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold text-gray-500 block">핵심 키워드 요약</span>
+                        <div class="flex flex-wrap gap-1">
+                            ${set.keywords.map(kw => `<span class="bg-gray-100 text-gray-700 text-[10px] px-2 py-0.5 rounded border border-gray-300 font-medium">#${kw}</span>`).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Question List Inline Expand Button -->
+                    <button onclick="toggleSetQuestionExpand('${set.id}')" class="wf-btn-outline w-full py-2 text-xs flex items-center justify-center space-x-1">
+                        <i class="fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-list-ul'} mr-1"></i>
+                        <span>질문 목록 ${isExpanded ? '접기' : '보기 (' + set.questions.length + ')'}</span>
+                    </button>
+
+                    <!-- Expanded Questions Area -->
+                    ${isExpanded ? `
+                        <div class="mt-2 pt-2 border-t border-gray-200 space-y-2 bg-gray-50 p-2 rounded">
+                            ${set.questions.map((qObj, idx) => `
+                                <div class="p-2 bg-white border border-gray-300 rounded space-y-1.5 text-xs">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-bold text-gray-900">Q${idx + 1}.</span>
+                                        <button onclick="openQuestionsModal('${set.id}')" class="wf-btn-outline px-2 py-0.5 text-[10px]">
+                                            <i class="fa-regular fa-pen-to-square mr-1"></i>질문 수정
+                                        </button>
+                                    </div>
+                                    <p class="font-semibold text-gray-800 leading-snug">${qObj.q}</p>
+                                    ${qObj.memo ? `<div class="text-[10px] text-gray-500 bg-gray-50 p-1 border border-gray-200 rounded">💡 ${qObj.memo}</div>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            }).join('');
+        }
+
+        function toggleSetQuestionExpand(setId) {
+            appState.expandedSetIds[setId] = !appState.expandedSetIds[setId];
+            renderMySavedSets();
+        }
+
+        // RENDER SUBTAB 2: QUESTION CATEGORIES VIEW (Auto vs Custom)
+        function renderCategoriesView() {
+            if (appState.categoryInnerView === 'auto') {
+                // 1. Auto Category Grouping by (Company + Job)
+                const autoMap = {};
+                appState.savedSets.forEach(set => {
+                    const groupKey = `${set.company} · ${set.job}`;
+                    if (!autoMap[groupKey]) {
+                        autoMap[groupKey] = {
+                            company: set.company,
+                            job: set.job,
+                            questions: []
+                        };
+                    }
+                    autoMap[groupKey].questions.push(...set.questions);
+                });
+
+                const autoContainer = document.getElementById('auto-categories-container');
+                const keys = Object.keys(autoMap);
+
+                if (keys.length === 0) {
+                    autoContainer.innerHTML = `<div class="p-4 text-center text-xs text-gray-500 italic bg-white border border-gray-300 rounded">저장된 질문 세트가 없습니다.</div>`;
+                } else {
+                    autoContainer.innerHTML = keys.map(key => {
+                        const item = autoMap[key];
+                        return `
+                            <div class="wf-box p-3 space-y-2">
+                                <div class="flex justify-between items-center border-b border-gray-200 pb-1.5">
+                                    <div class="flex items-center space-x-1.5">
+                                        <span class="font-bold text-xs text-gray-900"><i class="fa-solid fa-building text-gray-700 mr-1"></i>${key}</span>
+                                        <span class="wf-tag">${item.job}</span>
+                                    </div>
+                                    <span class="text-[10px] text-gray-500 font-bold">총 ${item.questions.length}개 질문</span>
+                                </div>
+                                <div class="space-y-1.5">
+                                    ${item.questions.slice(0, 4).map((q, idx) => `
+                                        <div class="text-xs text-gray-800 bg-gray-50 p-1.5 rounded border border-gray-200">
+                                            <span class="font-bold mr-1">Q.</span>${q.q}
+                                        </div>
+                                    `).join('')}
+                                    ${item.questions.length > 4 ? `<div class="text-[10px] text-gray-400 text-center font-bold">+ 외 ${item.questions.length - 4}개 질문 더보기</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } else {
+                // 2. Custom User Categories (Always ordered by recently edited timestamp, NO SORT SELECT)
+                let customList = [...appState.customCategories];
+                customList.sort((a, b) => b.editedAt - a.editedAt);
+
+                const customContainer = document.getElementById('custom-categories-container');
+                if (customList.length === 0) {
+                    customContainer.innerHTML = `<div class="p-4 text-center text-xs text-gray-400 italic bg-white border border-gray-300 rounded">생성된 사용자 지정 목록이 없습니다.<br>우상단 '+ 새 분류 생성' 버튼을 눌러보세요.</div>`;
+                } else {
+                    customContainer.innerHTML = customList.map(cat => {
+                        // Gather questions contained in this custom list
+                        const matchedQuestions = [];
+                        appState.savedSets.forEach(s => {
+                            s.questions.forEach(q => {
+                                if (cat.questionIds.includes(q.id)) {
+                                    matchedQuestions.push(q);
+                                }
+                            });
+                        });
+
+                        return `
+                            <div class="wf-box p-3 space-y-2">
+                                <div class="flex justify-between items-center border-b border-gray-200 pb-1.5">
+                                    <h5 class="font-extrabold text-xs text-gray-900"><i class="fa-solid fa-folder text-yellow-600 mr-1.5"></i>${cat.name}</h5>
+                                    <span class="text-[10px] bg-gray-100 border border-gray-300 text-gray-600 px-1.5 py-0.5 rounded font-bold">
+                                        질문 ${matchedQuestions.length}개
+                                    </span>
+                                </div>
+                                <div class="space-y-1.5">
+                                    ${matchedQuestions.length === 0 ? `<p class="text-[11px] text-gray-400 italic">연결된 질문이 없습니다.</p>` : matchedQuestions.map(q => `
+                                        <div class="text-xs text-gray-800 bg-gray-50 p-1.5 rounded border border-gray-200">
+                                            <span class="font-bold mr-1">Q.</span>${q.q}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+        }
+
+        // QUESTIONS LIST MODAL CONTROLS & EDITING
+        function openQuestionsModal(setId) {
+            appState.activeModalSetId = setId;
+            const set = appState.savedSets.find(s => s.id === setId);
+            if (!set) return;
+
+            document.getElementById('modal-set-title').innerText = `${set.title} - 질문 수정`;
+            document.getElementById('modal-set-subtitle').innerText = `질문 내용을 확인하고 수정할 수 있습니다.`;
+
+            renderModalQuestionsContent(set);
+            document.getElementById('modal-questions-list').classList.remove('hidden');
+        }
+
+        function closeQuestionsModal() {
+            document.getElementById('modal-questions-list').classList.add('hidden');
+            appState.activeModalSetId = null;
+            renderMySavedSets();
+        }
+
+        function renderModalQuestionsContent(set) {
+            const container = document.getElementById('modal-questions-content');
+            container.innerHTML = set.questions.map((qObj, idx) => `
+                <div class="p-3 bg-gray-50 border border-gray-300 rounded space-y-2 text-xs">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-gray-900">Q${idx + 1}.</span>
+                        <div class="space-x-1">
+                            <button onclick="toggleEditQuestionMode('${set.id}', ${idx})" class="wf-btn-outline px-2 py-0.5 text-[10px]">
+                                ${qObj.editing ? '<i class="fa-solid fa-check text-green-600 mr-1"></i>완료' : '<i class="fa-regular fa-pen-to-square mr-1"></i>질문 수정'}
+                            </button>
+                            <button onclick="deleteQuestionInModal('${set.id}', ${idx})" class="text-[10px] text-red-500 hover:underline font-bold px-1">삭제</button>
+                        </div>
+                    </div>
+
+                    ${qObj.editing ? `
+                        <input type="text" value="${qObj.q}" onchange="updateQuestionText('${set.id}', ${idx}, this.value)" class="wf-input w-full text-xs font-semibold bg-white" placeholder="질문 내용 수정...">
+                    ` : `
+                        <p class="font-semibold text-gray-800 leading-relaxed">${qObj.q}</p>
+                    `}
+
+                    <div class="space-y-1 pt-1 border-t border-gray-200">
+                        <span class="text-[10px] font-bold text-gray-500 block"><i class="fa-regular fa-lightbulb mr-1"></i>답변 방향 메모</span>
+                        <textarea rows="2" onchange="updateQuestionMemo('${set.id}', ${idx}, this.value)" class="wf-input w-full text-xs font-mono bg-white" placeholder="답변 키워드 및 메모 입력...">${qObj.memo || ''}</textarea>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleEditQuestionMode(setId, idx) {
+            const set = appState.savedSets.find(s => s.id === setId);
+            if (set && set.questions[idx]) {
+                set.questions[idx].editing = !set.questions[idx].editing;
+                renderModalQuestionsContent(set);
+            }
+        }
+
+        function updateQuestionText(setId, idx, val) {
+            const set = appState.savedSets.find(s => s.id === setId);
+            if (set && set.questions[idx]) {
+                set.questions[idx].q = val;
+                showToast("질문 내용이 수정되었습니다.");
+            }
+        }
+
+        function updateQuestionMemo(setId, idx, val) {
+            const set = appState.savedSets.find(s => s.id === setId);
+            if (set && set.questions[idx]) {
+                set.questions[idx].memo = val;
+                showToast("답변 메모가 저장되었습니다.");
+            }
+        }
+
+        function deleteQuestionInModal(setId, idx) {
+            const set = appState.savedSets.find(s => s.id === setId);
+            if (set) {
+                set.questions.splice(idx, 1);
+                showToast("질문이 삭제되었습니다.");
+                renderModalQuestionsContent(set);
+            }
+        }
+
+        // CUSTOM CATEGORY CREATION MODAL
+        function openCreateCustomCategoryModal() {
+            const container = document.getElementById('custom-cat-questions-select-list');
+            const allQuestions = [];
+            
+            appState.savedSets.forEach(s => {
+                s.questions.forEach(q => {
+                    allQuestions.push({ setId: s.id, qId: q.id, text: q.q, setTile: s.title });
+                });
+            });
+
+            if (allQuestions.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-500 italic">저장된 질문이 없습니다. 질문을 먼저 저장해주세요.</p>`;
+            } else {
+                container.innerHTML = allQuestions.map(item => `
+                    <label class="flex items-start space-x-2 text-xs p-1 hover:bg-white rounded cursor-pointer">
+                        <input type="checkbox" name="cat-selected-q" value="${item.qId}" class="mt-0.5">
+                        <div class="space-y-0.5">
+                            <span class="text-gray-900 font-medium block leading-tight">${item.text}</span>
+                            <span class="text-[10px] text-gray-400 block">${item.setTile}</span>
+                        </div>
+                    </label>
+                `).join('');
+            }
+
+            document.getElementById('modal-create-category').classList.remove('hidden');
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('modal-create-category').classList.add('hidden');
+        }
+
+        function saveCustomCategory() {
+            const nameInput = document.getElementById('custom-cat-name-input').value.trim();
+            if (!nameInput) {
+                showToast("지정 목록 이름을 입력해 주세요.");
+                return;
+            }
+
+            const checkboxes = document.querySelectorAll('input[name="cat-selected-q"]:checked');
+            const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+
+            const now = Date.now();
+            const newCat = {
+                id: 'cat_c' + now,
+                name: nameInput,
+                editedAt: now,
+                createdAt: now,
+                questionIds: selectedIds
+            };
+
+            appState.customCategories.unshift(newCat);
+            showToast("새 지정 목록이 생성되었습니다!");
+            closeCategoryModal();
+            renderCategoriesView();
+        }
+
+        function setSavedQuestionsState(hasData) {
+            appState.hasSavedData = hasData;
+
+            const btnData = document.getElementById('btn-state-data');
+            const btnEmpty = document.getElementById('btn-state-empty');
+
+            if (hasData) {
+                btnData.className = "px-1.5 py-0.5 text-[10px] font-bold bg-gray-800 text-white rounded";
+                btnEmpty.className = "px-1.5 py-0.5 text-[10px] font-bold bg-gray-200 text-gray-700 rounded";
+            } else {
+                btnEmpty.className = "px-1.5 py-0.5 text-[10px] font-bold bg-gray-800 text-white rounded";
+                btnData.className = "px-1.5 py-0.5 text-[10px] font-bold bg-gray-200 text-gray-700 rounded";
+            }
+
+            document.getElementById('saved-data-container').classList.toggle('hidden', !hasData);
+            document.getElementById('saved-empty-container').classList.toggle('hidden', hasData);
+        }
+
+        function deleteQuestionSet(setId) {
+            appState.savedSets = appState.savedSets.filter(s => s.id !== setId);
+            showToast("질문 세트가 삭제되었습니다.");
+            renderMySavedSets();
+        }
+
+        // Mock Interview Screen Logic (Select from Mypage Saved Sets)
+        function renderPracticeScreen() {
+            const selectEl = document.getElementById('practice-set-select');
+            if (appState.savedSets.length === 0) {
+                selectEl.innerHTML = `<option value="">저장된 질문 세트가 없습니다</option>`;
+                document.getElementById('fc-main-text').innerText = "마이페이지에 저장된 질문 세트가 없습니다. 먼저 질문을 생성하여 저장하세요.";
+                return;
+            }
+
+            selectEl.innerHTML = appState.savedSets.map(s => `
+                <option value="${s.id}" ${s.id === appState.practiceSetId ? 'selected' : ''}>${s.title} (${s.questions.length}문항)</option>
+            `).join('');
+
+            const activeSet = appState.savedSets.find(s => s.id === appState.practiceSetId) || appState.savedSets[0];
+            appState.practiceSetId = activeSet.id;
+
+            renderFlashcard();
+        }
+
+        function handlePracticeSetChange(setId) {
+            appState.practiceSetId = setId;
+            appState.flashcardIndex = 0;
+            appState.flashcardFlipped = false;
+            renderPracticeScreen();
+        }
+
+        function renderFlashcard() {
+            const activeSet = appState.savedSets.find(s => s.id === appState.practiceSetId);
+            if (!activeSet || activeSet.questions.length === 0) return;
+
+            const total = activeSet.questions.length;
+            if (appState.flashcardIndex >= total) appState.flashcardIndex = 0;
+            if (appState.flashcardIndex < 0) appState.flashcardIndex = total - 1;
+
+            const qObj = activeSet.questions[appState.flashcardIndex];
+
+            document.getElementById('fc-counter-label').innerText = `${appState.flashcardIndex + 1} / ${total}`;
+            
+            const sideLabel = document.getElementById('fc-side-label');
+            const mainText = document.getElementById('fc-main-text');
+            const memoInput = document.getElementById('fc-memo-input');
+
+            memoInput.value = qObj.memo || '';
+
+            if (!appState.flashcardFlipped) {
+                sideLabel.innerText = "FRONT (질문)";
+                sideLabel.className = "font-bold text-gray-700";
+                mainText.innerText = qObj.q;
+            } else {
+                sideLabel.innerText = "BACK (답변 가이드)";
+                sideLabel.className = "font-bold text-gray-900";
+                mainText.innerHTML = qObj.memo ? 
+                    `<span class="text-xs text-left block bg-gray-100 p-2.5 border border-gray-300 font-mono">${qObj.memo}</span>` : 
+                    `<span class="text-xs text-gray-400 italic">등록된 답변 가이드가 없습니다.<br>하단 메모장에 직접 작성해보세요.</span>`;
+            }
+        }
+
+        function flipFlashcard() {
+            appState.flashcardFlipped = !appState.flashcardFlipped;
+            renderFlashcard();
+        }
+
+        function prevFlashcard() {
+            appState.flashcardIndex--;
+            appState.flashcardFlipped = false;
+            renderFlashcard();
+        }
+
+        function nextFlashcard() {
+            appState.flashcardIndex++;
+            appState.flashcardFlipped = false;
+            renderFlashcard();
+        }
+
+        function saveCurrentCardMemo() {
+            const activeSet = appState.savedSets.find(s => s.id === appState.practiceSetId);
+            if (activeSet && activeSet.questions[appState.flashcardIndex]) {
+                const val = document.getElementById('fc-memo-input').value;
+                activeSet.questions[appState.flashcardIndex].memo = val;
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, 1800);
+        }
+
+        function renderApp() {
+            renderHomeScreen();
+            renderMySavedSets();
+            switchTab('home');
+        }
+    </script>
+</body>
+</html>
