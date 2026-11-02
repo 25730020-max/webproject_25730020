@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>면접 질문 유형 탐색 서비스 · Lo-Fi Wireframe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wire: {
+                            bg: '#f8f9fa',
+                            panel: '#ffffff',
+                            border: '#333333',
+                            dashed: '#999999',
+                            muted: '#666666',
+                            light: '#eeeeee',
+                            dark: '#111111',
+                            tag: '#e2e8f0',
+                            accent: '#444444'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Courier New', 'Monaco', 'ui-monospace', 'monospace', 'Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f3f4f6;
+            color: #111111;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding-bottom: 80px;
+        }
+
+        /* Wireframe Styles */
+        .wf-box {
+            border: 2px solid #222222;
+            background-color: #ffffff;
+            box-shadow: 3px 3px 0px #222222;
+        }
+
+        .wf-box-dashed {
+            border: 2px dashed #666666;
+            background-color: #ffffff;
+        }
+
+        .wf-btn {
+            border: 2px solid #222222;
+            background-color: #ffffff;
+            font-weight: 600;
+            box-shadow: 2px 2px 0px #222222;
+            transition: all 0.1s ease;
+        }
+
+        .wf-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #222222;
+        }
+
+        .wf-btn-dark {
+            border: 2px solid #222222;
+            background-color: #222222;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 2px 2px 0px #666666;
+        }
+
+        .wf-btn-dark:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #666666;
+        }
+
+        .wf-tag {
+            border: 1px solid #333333;
+            background-color: #e5e7eb;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            font-weight: 600;
+        }
+
+        .wf-input {
+            border: 2px solid #333333;
+            background-color: #ffffff;
+            padding: 8px 12px;
+            outline: none;
+        }
+
+        .wf-input:focus {
+            border-color: #000000;
+            background-color: #fafafa;
+        }
+
+        /* Annotations toggle */
+        .anno-marker {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #000000;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 4px;
+            flex-shrink: 0;
+        }
+
+        .show-annotations .anno-element {
+            display: inline-flex !important;
+        }
+
+        .hide-annotations .anno-element {
+            display: none !important;
+        }
+
+        /* Flashcard perspective */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="show-annotations min-h-screen text-gray-900">
+
+    <header class="sticky top-0 z-40 bg-white border-b-2 border-black px-4 py-3 shadow-sm">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-layer-group text-lg"></i>
+                <h1 class="font-bold text-sm tracking-tight leading-tight">면접 질문 유형 탐색 <span class="text-xs font-normal text-gray-500 block">Lo-Fi Wireframe Prototype</span></h1>
+            </div>
+            
+            <!-- Annotation Toggle -->
+            <button id="annoToggleBtn" onclick="toggleAnnotations()" class="text-xs px-2 py-1 border border-black bg-gray-100 rounded flex items-center space-x-1">
+                <i class="fa-regular fa-comment-dots"></i>
+                <span id="annoToggleText">주석 ON</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto p-4 pb-24">
+
+        <!-- SCREEN 1: HOME TAB -->
+        <section id="screen-home" class="space-y-5">
+            <!-- Header Banner -->
+            <div class="wf-box p-4 relative">
+                <span class="anno-element anno-marker absolute -top-2 -left-2">①</span>
+                <span class="wf-tag mb-2 inline-block">AI WIREFRAME ENGINE</span>
+                <h2 class="text-xl font-black mb-1">나만의 AI 면접 질문 생성기</h2>
+                <p class="text-xs text-gray-600">직무와 채용 공고(JD)를 입력하면 핵심 유형별 면접 예상 질문을 도출합니다.</p>
+            </div>
+
+            <!-- Input Form Card -->
+            <div class="wf-box p-4 space-y-4 relative">
+                <span class="anno-element anno-marker absolute -top-2 -left-2">②</span>
+                <h3 class="font-bold text-sm border-b-2 border-black pb-1 flex justify-between items-center">
+                    <span><i class="fa-regular fa-pen-to-square mr-1"></i> 질문 생성 조건 입력</span>
+                    <span class="text-xs text-gray-500 font-normal">*필수입력</span>
+                </h3>
+
+                <!-- Job Category Dropdown -->
+                <div>
+                    <label class="block text-xs font-bold mb-1">직무 분야 (Category)</label>
+                    <select id="home-job-category" class="wf-input w-full text-sm">
+                        <option value="Frontend">프론트엔드 개발자 (Frontend)</option>
+                        <option value="Backend">백엔드 개발자 (Backend)</option>
+                        <option value="AI/Data">AI / 데이터 엔지니어</option>
+                        <option value="Product Manager">서비스 기획 / PM</option>
+                        <option value="Marketing">마케팅 / 브랜딩</option>
+                    </select>
+                </div>
+
+                <!-- Target Company -->
+                <div>
+                    <label class="block text-xs font-bold mb-1">지원 기업명 (Target Company)</label>
+                    <input type="text" id="home-company-name" placeholder="예: 네이버, 카카오, 토스" value="네이버" class="wf-input w-full text-sm">
+                </div>
+
+                <!-- Job Description TextArea -->
+                <div>
+                    <label class="block text-xs font-bold mb-1">채용 공고 및 자기소개서 요약</label>
+                    <textarea id="home-jd-text" rows="3" placeholder="공고 내용이나 자소서의 주요 역량을 입력하세요..." class="wf-input w-full text-sm">React, TypeScript, 상태 관리 라이브러리 사용 경험 및 UI/UX 성능 최적화 경험 우대</textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button onclick="generateAIQuestions()" class="wf-btn-dark w-full py-3 text-sm flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>AI 면접 질문 생성하기</span>
+                </button>
+            </div>
+
+            <!-- Recent Generated Interview Quick Card -->
+            <div class="wf-box-dashed p-4 relative">
+                <span class="anno-element anno-marker absolute -top-2 -left-2">③</span>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-bold text-gray-500"><i class="fa-regular fa-clock mr-1"></i>최근 생성된 면접 세트</span>
+                    <span id="recent-date" class="text-xs text-gray-400">2026.10.12</span>
+                </div>
+                <div id="recent-card-body" class="space-y-2">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: QUESTION LIST TAB -->
+        <section id="screen-list" class="space-y-4 hidden">
+            <!-- Header Spec -->
+            <div class="wf-box p-3 bg-gray-100 flex items-center justify-between relative">
+                <span class="anno-element anno-marker absolute -top-2 -left-2">④</span>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span id="list-job-badge" class="wf-tag">Frontend</span>
+                        <h2 id="list-company-title" class="font-bold text-base">네이버 면접 질문 세트</h2>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">총 <span id="list-total-count" class="font-bold text-black">0</span>개의 대표 질문 도출됨</p>
+                </div>
+                <button onclick="switchTab('home')" class="text-xs underline text-gray-600 font-semibold">재생성</button>
+            </div>
+
+            <!-- Exception State Simulators (Wireframe Test Controls) -->
+            <div class="border border-gray-400 p-2 text-xs bg-gray-50 space-y-1 rounded relative">
+                <span class="anno-element anno-marker absolute -top-2 -left-2">⑤</span>
+                <div class="font-bold text-gray-600">[와이어프레임 예외 상태 시뮬레이터]</div>
+                <div class="flex space-x-2">
+                    <button onclick="toggleListState('normal')" class="px-2 py-0.5 border border-black bg-white">정상</button>
+                    <button onclick="toggleListState('empty')" class="px-2 py-0.5 border border-black bg-white">결과 0건</button>
+                    <button onclick="toggleListState('error')" class="px-2 py-0.5 border border-black bg-white">API 오류</button>
+                </div>
+            </div>
+
+            <!-- Filters & Search -->
+            <div class="space-y-2 relative">
+                <span class="anno-element anno-marker absolute -top-2 -left-2">⑥</span>
+                <!-- Filter Chips -->
+                <div class="flex space-x-1 overflow-x-auto pb-1 text-xs" id="filter-chips">
+                    <!-- JSON 카테고리 기준으로 동적 생성 -->
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative">
+                    <input type="text" id="question-search-input" oninput="handleSearch()" placeholder="질문 키워드 검색..." class="wf-input w-full text-xs pr-8">
+                    <i class="fa-solid fa-magnifying-glass absolute right-3 top-2.5 text-gray-400 text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Question Cards Container -->
+            <div id="questions-container" class="space-y-3 relative">
+                <span class="anno-element anno-marker absolute -top-2 -left-2">⑦</span>
+                <!-- Populated dynamically -->
+            </div>
+
+            <!-- Sticky Save Set Action -->
+            <div class="pt-2">
+                <button onclick="saveCurrentInterviewSet()" class="wf-btn w-full py-3 text-xs bg-gray-100 flex items-center justify-center space-x-2">
+                    <i class="fa-regular fa-bookmark"></i>
+                    <span>이 질문 세트 전체 보관함에 저장하기</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: QUESTION DETAIL TAB -->
+        <section id="screen-detail" class="space-y-4 hidden">
+            <!-- Navigation Back Bar -->
+            <button onclick="switchTab('list')" class="text-xs font-bold flex items-center space-x-1 mb-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>목록으로 돌아가기</span>
+            </button>
+
+            <!-- Question Detail Container -->
+            <div class="wf-box p-4 space-y-3 relative">
+                <span class="anno-element anno-marker absolute -top-2 -left-2">⑧</span>
+                <div class="flex justify-between items-start">
+                    <span id="detail-type-badge" class="wf-tag">직무/기술</span>
+                    <button id="detail-bookmark-btn" onclick="toggleDetailBookmark()" class="text-lg">
+                        <i class="fa-regular fa-star"></i>
+                    </button>
+                </div>
+
+                <h3 id="detail-question-text" class="font-bold text-base leading-snug">
+                    질문 내용을 불러오는 중...
+                </h3>
+
+                <div class="bg-gray-100 p-2 text-xs text-gray-600 border border-gray-300">
+                    <div class="font-bold text-black mb-1"><i class="fa-solid fa-lightbulb text-xs mr-1"></i>면접 의도 및 답변 방향 가이드</div>
+                    <p id="detail-intent-text">해당 질문은 지원자의 기술적 깊이와 문제 해결 사고 능력을 파악하기 위한 질문입니다.</p>
+                </div>
+            </div>
+
+            <!-- Note / Answer Editor Container -->
+            <div class="wf-box p-4 space-y-3 relative">
+                <span class="anno-element anno-marker absolute -top-2 -left-2">⑨</span>
+                <label class="block font-bold text-xs flex justify-between items-center">
+                    <span><i class="fa-regular fa-note-sticky mr-1"></i>나만의 답변 포인트 작성 (메모)</span>
+                    <span class="text-xs font-normal text-gray-500">자동 저장 연동</span>
+                </label>
+                <textarea id="detail-memo-input" rows="6" placeholder="핵심 경험 스토리와 답변 키워드(STAR 기법)를 정리해두세요..." class="wf-input w-full text-xs font-mono"></textarea>
+                
+                <div class="flex space-x-2 pt-1">
+                    <button onclick="saveDetailMemo()" class="wf-btn-dark flex-1 py-2 text-xs flex items-center justify-center space-x-1">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>메모 저장하기</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 4: MY SAVED & PRACTICE TAB -->
+        <section id="screen-my" class="space-y-4 hidden">
+            <!-- Sub Navigation Tabs -->
+            <div class="flex border-b-2 border-black text-xs font-bold relative">
+                <span class="anno-element anno-marker absolute -top-2 -left-2">⑩</span>
+                <button id="subtab-btn-saved" onclick="switchMySubTab('saved')" class="flex-1 py-2 text-center border-t-2 border-l-2 border-r-2 border-black bg-black text-white">
+                    저장된 질문 세트
+                </button>
+                <button id="subtab-btn-practice" onclick="switchMySubTab('practice')" class="flex-1 py-2 text-center border-b-2 border-transparent bg-gray-200 text-gray-700">
+                    실전 플래시카드 연습
+                </button>
+            </div>
+
+            <!-- Sub Tab 1: Saved Questions -->
+            <div id="subtab-saved-content" class="space-y-3">
+                <div id="my-saved-list" class="space-y-3">
+                    <!-- Dynamic rendering -->
+                </div>
+            </div>
+
+            <!-- Sub Tab 2: Practice Flashcards -->
+            <div id="subtab-practice-content" class="space-y-4 hidden">
+                <div class="text-center">
+                    <span class="wf-tag">FLASHCARD PRACTICE</span>
+                    <p class="text-xs text-gray-500 mt-1">카드를 클릭하여 질문 뒤의 답변 메모를 확인하세요.</p>
+                </div>
+
+                <!-- Flashcard Viewport -->
+                <div id="flashcard-box" onclick="flipCard()" class="wf-box p-6 min-h-[220px] flex flex-col justify-between cursor-pointer hover:bg-gray-50 transition-all text-center relative select-none">
+                    <span class="anno-element anno-marker absolute -top-2 -left-2">⑪</span>
+                    <div class="flex justify-between items-center text-xs text-gray-400">
+                        <span id="fc-category-badge" class="wf-tag">직무/기술</span>
+                        <span id="fc-side-indicator" class="font-bold">FRONT (질문)</span>
+                    </div>
+
+                    <div id="fc-content-text" class="font-bold text-base my-4 leading-relaxed">
+                        질문을 불러오고 있습니다.
+                    </div>
+
+                    <div class="text-xs text-gray-400">
+                        <i class="fa-solid fa-rotate mr-1"></i>카드를 클릭하여 뒤집기
+                    </div>
+                </div>
+
+                <!-- Flashcard Navigation Controls -->
+                <div class="flex justify-between items-center space-x-2 text-xs">
+                    <button onclick="prevFlashcard()" class="wf-btn px-4 py-2 flex-1"><i class="fa-solid fa-chevron-left mr-1"></i> 이전 질문</button>
+                    <span id="fc-counter" class="font-bold px-2">1 / 5</span>
+                    <button onclick="nextFlashcard()" class="wf-btn px-4 py-2 flex-1">다음 질문 <i class="fa-solid fa-chevron-right ml-1"></i></button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FIXED BOTTOM TAB NAVIGATION BAR -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-black z-50">
+        <div class="max-w-md mx-auto flex justify-around items-center h-16">
+            <!-- Tab 1: Home -->
+            <button id="tab-btn-home" onclick="switchTab('home')" class="flex-1 flex flex-col items-center justify-center h-full border-r border-gray-200 font-bold text-xs">
+                <i class="fa-solid fa-house text-base mb-0.5"></i>
+                <span>홈</span>
+            </button>
+
+            <!-- Tab 2: Question List -->
+            <button id="tab-btn-list" onclick="switchTab('list')" class="flex-1 flex flex-col items-center justify-center h-full border-r border-gray-200 text-gray-500 text-xs">
+                <i class="fa-solid fa-list-check text-base mb-0.5"></i>
+                <span>질문 목록</span>
+            </button>
+
+            <!-- Tab 3: My Saved & Practice -->
+            <button id="tab-btn-my" onclick="switchTab('my')" class="flex-1 flex flex-col items-center justify-center h-full text-gray-500 text-xs">
+                <i class="fa-solid fa-user text-base mb-0.5"></i>
+                <span>마이</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Message Toast -->
+    <div id="toast-msg" class="fixed top-16 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-4 py-2 border border-white shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none z-50">
+        메시지 내용
+    </div>
+
+    <script>
+        // ===== 샘플 질문 데이터 (data/interview_sample_questions_300.json) =====
+        const SAMPLE_QUESTIONS_URL = 'data/interview_sample_questions_300.json';
+        const PAGE_SIZE = 20;               // 질문 목록 한 번에 표시할 개수
+        const STORAGE_KEY = 'wireframe_interview_data';
+
+        // 직무 셀렉트 값 ↔ JSON 안의 직무 문자열 매칭용 별칭
+        const JOB_ALIASES = {
+            'Frontend': ['frontend', 'front-end', '프론트'],
+            'Backend': ['backend', 'back-end', '백엔드'],
+            'AI/Data': ['ai', 'data', '데이터'],
+            'Product Manager': ['product', 'pm', '기획'],
+            'Marketing': ['marketing', '마케팅', '브랜딩']
+        };
+
+        // Application State
+        let state = {
+            currentTab: 'home',
+            mySubTab: 'saved',
+            currentJob: 'Frontend',
+            currentCompany: '네이버',
+            allQuestions: [],      // JSON 전체 (정규화됨)
+            questions: [],         // 현재 직무로 추려진 질문
+            categories: [],        // 현재 질문들의 카테고리 목록 (필터 칩용)
+            userData: {},          // { [id]: { bookmarked, memo } } 사용자가 남긴 데이터만 저장
+            loadStatus: 'loading', // 'loading' | 'ready' | 'error'
+            visibleCount: PAGE_SIZE,
+            activeFilter: 'ALL',
+            searchQuery: '',
+            activeQuestionId: null,
+            flashcardIndex: 0,
+            flashcardFlipped: false,
+            annotationsOn: true
+        };
+
+        // HTML 이스케이프 (JSON 문자열을 innerHTML에 넣기 전에 사용)
+        function esc(v) {
+            return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+
+        // Initialize App
+        window.onload = async function() {
+            loadUserState();
+            renderApp();               // 먼저 화면을 그리고(로딩 표시)
+            await loadSampleQuestions(); // JSON 호출 후 다시 렌더
+        };
+
+        // Render Application
+        function renderApp() {
+            switchTab(state.currentTab || 'home');
+        }
+
+        // ---- JSON 호출 ----
+        async function loadSampleQuestions() {
+            state.loadStatus = 'loading';
+            if (state.currentTab === 'list') renderListScreen();
+
+            try {
+                const res = await fetch(SAMPLE_QUESTIONS_URL, { cache: 'no-cache' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const raw = await res.json();
+
+                // 배열 그대로이거나 { questions: [...] } 같은 래핑 구조 모두 허용
+                const list = Array.isArray(raw)
+                    ? raw
+                    : (raw.questions || raw.data || raw.items || raw.samples || []);
+                if (!Array.isArray(list) || list.length === 0) throw new Error('empty data');
+
+                state.allQuestions = list.map(normalizeQuestion);
+                applyJobFilter();
+                state.loadStatus = 'ready';
+            } catch (e) {
+                console.error('[샘플 질문 로드 실패]', e);
+                state.allQuestions = [];
+                state.questions = [];
+                state.categories = [];
+                state.loadStatus = 'error';
+            }
+
+            renderFilterChips();
+            if (state.currentTab === 'list') renderListScreen();
+            if (state.currentTab === 'home') renderHomeScreen();
+            if (state.currentTab === 'my') renderMyScreen();
+        }
+
+        function retryLoadSamples() {
+            loadSampleQuestions();
+        }
+
+        // JSON 한 건을 앱 내부 형식으로 변환 (필드명이 조금 달라도 대응)
+        function pick(obj, keys, fallback = '') {
+            for (const k of keys) {
+                if (obj[k] !== undefined && obj[k] !== null && obj[k] !== '') return obj[k];
+            }
+            return fallback;
+        }
+
+        function normalizeQuestion(item, idx) {
+            const rawId = pick(item, ['id', 'question_id', 'qid', 'no'], idx + 1);
+            const id = String(rawId).replace(/[^\w\-가-힣]/g, '_');
+            const saved = state.userData[id] || {};
+            return {
+                id,
+                category: String(pick(item, ['category', 'type', 'question_type', 'questionType', '유형', '카테고리'], '기타')),
+                job: String(pick(item, ['job', 'job_category', 'jobCategory', 'position', 'role', 'field', '직무'], '')),
+                question: String(pick(item, ['question', 'text', 'content', 'title', 'q', '질문'], '')),
+                intent: String(pick(item, ['intent', 'guide', 'purpose', 'description', 'tip', '의도'], '')),
+                bookmarked: !!saved.bookmarked,
+                memo: saved.memo || ''
+            };
+        }
+
+        // 선택한 직무에 맞는 질문만 추리기 (맞는 게 하나도 없으면 전체 사용)
+        function applyJobFilter() {
+            const aliases = JOB_ALIASES[state.currentJob] || [state.currentJob.toLowerCase()];
+            const matched = state.allQuestions.filter(q => {
+                const j = q.job.toLowerCase();
+                return j && aliases.some(a => j.includes(a));
+            });
+            state.questions = matched.length ? matched : state.allQuestions;
+
+            state.categories = [...new Set(state.questions.map(q => q.category))];
+            if (state.activeFilter !== 'ALL' && !state.categories.includes(state.activeFilter)) {
+                state.activeFilter = 'ALL';
+            }
+            state.visibleCount = PAGE_SIZE;
+        }
+
+        // 카테고리 필터 칩을 데이터에서 동적으로 생성
+        function renderFilterChips() {
+            const wrap = document.getElementById('filter-chips');
+            const chip = (label, value) => {
+                const active = state.activeFilter === value;
+                return `<button data-category="${esc(value)}" onclick="filterQuestions(this.dataset.category)" class="chip-btn border-2 border-black ${active ? 'bg-black text-white' : 'bg-white text-black'} px-3 py-1 font-bold whitespace-nowrap">${esc(label)}</button>`;
+            };
+            wrap.innerHTML = chip('전체', 'ALL') + state.categories.map(c => chip(c, c)).join('');
+        }
+
+        // ---- 사용자 데이터(북마크/메모/직무/기업명)만 localStorage에 저장 ----
+        function loadUserState() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+                if (!saved) return;
+                state.currentJob = saved.currentJob || 'Frontend';
+                state.currentCompany = saved.currentCompany || '네이버';
+                state.userData = saved.userData || {};
+
+                // 이전 버전(질문 전체를 저장하던 형식) 호환
+                if (!saved.userData && Array.isArray(saved.questions)) {
+                    saved.questions.forEach(q => {
+                        if (q.bookmarked || q.memo) state.userData[q.id] = { bookmarked: !!q.bookmarked, memo: q.memo || '' };
+                    });
+                }
+            } catch (e) {
+                state.userData = {};
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                currentJob: state.currentJob,
+                currentCompany: state.currentCompany,
+                userData: state.userData
+            }));
+        }
+
+        function updateUserData(q) {
+            if (q.bookmarked || q.memo) {
+                state.userData[q.id] = { bookmarked: q.bookmarked, memo: q.memo };
+            } else {
+                delete state.userData[q.id];
+            }
+            saveToLocalStorage();
+        }
+
+        // Navigation Tab Switching
+        function switchTab(tabName) {
+            state.currentTab = tabName;
+            
+            // Toggle visibility
+            document.getElementById('screen-home').classList.toggle('hidden', tabName !== 'home');
+            document.getElementById('screen-list').classList.toggle('hidden', tabName !== 'list');
+            document.getElementById('screen-detail').classList.toggle('hidden', tabName !== 'detail');
+            document.getElementById('screen-my').classList.toggle('hidden', tabName !== 'my');
+
+            // Update Tab Bar Active States
+            const tabs = ['home', 'list', 'my'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (!btn) return;
+                if (t === tabName || (tabName === 'detail' && t === 'list')) {
+                    btn.className = "flex-1 flex flex-col items-center justify-center h-full border-r border-gray-200 font-bold text-xs bg-black text-white";
+                } else {
+                    btn.className = "flex-1 flex flex-col items-center justify-center h-full border-r border-gray-200 text-gray-500 text-xs bg-white";
+                }
+            });
+
+            // Re-render corresponding tab view
+            if (tabName === 'home') renderHomeScreen();
+            if (tabName === 'list') renderListScreen();
+            if (tabName === 'my') renderMyScreen();
+
+            window.scrollTo(0, 0);
+        }
+
+        // Render Screen 1: Home
+        function renderHomeScreen() {
+            document.getElementById('home-job-category').value = state.currentJob;
+            document.getElementById('home-company-name').value = state.currentCompany;
+
+            const recentBody = document.getElementById('recent-card-body');
+            recentBody.innerHTML = `
+                <div class="text-xs font-bold">${state.currentCompany} · ${state.currentJob} 세트</div>
+                <div class="text-xs text-gray-600">생성된 질문 ${state.questions.length}개 / 북마크 ${state.allQuestions.filter(q=>q.bookmarked).length}개</div>
+                <button onclick="switchTab('list')" class="wf-btn w-full py-1.5 text-xs mt-1">이어서 확인하기</button>
+            `;
+        }
+
+        // Action: Generate AI Questions
+        function generateAIQuestions() {
+            const job = document.getElementById('home-job-category').value;
+            const company = document.getElementById('home-company-name').value || '지원 기업';
+
+            showToast('AI가 면접 질문을 분석 생성 중입니다...');
+
+            setTimeout(() => {
+                state.currentJob = job;
+                state.currentCompany = company;
+                state.activeFilter = 'ALL';
+                state.searchQuery = '';
+                document.getElementById('question-search-input').value = '';
+                applyJobFilter();
+                renderFilterChips();
+                saveToLocalStorage();
+                showToast('생성이 완료되었습니다!');
+                switchTab('list');
+            }, 600);
+        }
+
+        // Render Screen 2: List
+        function renderListScreen() {
+            document.getElementById('list-job-badge').innerText = state.currentJob;
+            document.getElementById('list-company-title').innerText = `${state.currentCompany} 면접 질문 세트`;
+
+            const container = document.getElementById('questions-container');
+
+            // 로딩 중
+            if (state.loadStatus === 'loading') {
+                document.getElementById('list-total-count').innerText = '-';
+                container.innerHTML = `
+                    <div class="wf-box p-8 text-center text-gray-500 space-y-2">
+                        <i class="fa-solid fa-spinner fa-spin text-2xl"></i>
+                        <p class="text-xs font-bold text-black">샘플 질문을 불러오는 중입니다...</p>
+                    </div>`;
+                return;
+            }
+
+            // 로드 실패
+            if (state.loadStatus === 'error') {
+                document.getElementById('list-total-count').innerText = '0';
+                container.innerHTML = `
+                    <div class="wf-box p-6 text-center space-y-2 bg-gray-50">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl text-black"></i>
+                        <p class="text-xs font-bold">샘플 질문 데이터를 불러오지 못했습니다 [Error State]</p>
+                        <p class="text-[11px] text-gray-600">${esc(SAMPLE_QUESTIONS_URL)} 경로를 확인해주세요.<br>파일을 직접 열면(file://) 브라우저가 JSON 호출을 막으니 로컬 서버로 실행해주세요.</p>
+                        <button onclick="retryLoadSamples()" class="wf-btn text-xs px-3 py-1">재시도</button>
+                    </div>`;
+                return;
+            }
+
+            const keyword = state.searchQuery.trim().toLowerCase();
+            const filtered = state.questions.filter(q => {
+                const matchCategory = state.activeFilter === 'ALL' || q.category === state.activeFilter;
+                const matchSearch = !keyword || q.question.toLowerCase().includes(keyword);
+                return matchCategory && matchSearch;
+            });
+
+            document.getElementById('list-total-count').innerText = filtered.length;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="wf-box p-6 text-center text-gray-500 space-y-2">
+                        <i class="fa-solid fa-folder-open text-2xl"></i>
+                        <p class="text-xs font-bold">조건에 해당하는 질문이 없습니다.</p>
+                        <p class="text-[11px]">검색어나 카테고리 필터를 변경해 보세요.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const visible = filtered.slice(0, state.visibleCount);
+            const remaining = filtered.length - visible.length;
+
+            container.innerHTML = visible.map(q => `
+                <div class="wf-box p-3 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="wf-tag">${esc(q.category)}</span>
+                        <button onclick="toggleBookmark('${q.id}')" class="text-base px-1">
+                            <i class="${q.bookmarked ? 'fa-solid fa-star text-black' : 'fa-regular fa-star text-gray-400'}"></i>
+                        </button>
+                    </div>
+                    <div class="text-xs font-bold leading-relaxed cursor-pointer" onclick="openQuestionDetail('${q.id}')">
+                        ${esc(q.question)}
+                    </div>
+                    ${q.memo ? `<div class="text-[11px] text-gray-600 bg-gray-100 p-1.5 border border-gray-300 font-mono truncate"><i class="fa-regular fa-note-sticky mr-1"></i>${esc(q.memo)}</div>` : ''}
+                    <div class="flex justify-between items-center pt-1 text-[11px]">
+                        <button onclick="openQuestionDetail('${q.id}')" class="font-bold underline text-gray-700">답변 작성 / 상세보기 →</button>
+                    </div>
+                </div>
+            `).join('') + (remaining > 0 ? `
+                <button onclick="showMoreQuestions()" class="wf-btn w-full py-2 text-xs">
+                    더 보기 (${remaining}개 남음)
+                </button>` : '');
+        }
+
+        function showMoreQuestions() {
+            state.visibleCount += PAGE_SIZE;
+            renderListScreen();
+        }
+
+        // Filter and Search Actions
+        function filterQuestions(category) {
+            state.activeFilter = category;
+            state.visibleCount = PAGE_SIZE;
+            renderFilterChips();
+            renderListScreen();
+        }
+
+        function handleSearch() {
+            state.searchQuery = document.getElementById('question-search-input').value;
+            state.visibleCount = PAGE_SIZE;
+            renderListScreen();
+        }
+
+        // Wireframe State Exception Simulator Toggle
+        function toggleListState(status) {
+            const container = document.getElementById('questions-container');
+            if (status === 'empty') {
+                container.innerHTML = `
+                    <div class="wf-box p-8 text-center text-gray-500 space-y-2">
+                        <i class="fa-solid fa-magnifying-glass text-2xl"></i>
+                        <p class="text-xs font-bold text-black">검색된 면접 질문이 없습니다 [Empty State]</p>
+                        <p class="text-[11px]">다른 키워드로 검색하거나 생성 조건을 다시 설정하세요.</p>
+                    </div>
+                `;
+            } else if (status === 'error') {
+                container.innerHTML = `
+                    <div class="wf-box p-6 border-red-500 text-center space-y-2 bg-gray-50">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl text-black"></i>
+                        <p class="text-xs font-bold">API 통신 오류가 발생했습니다 [Error State]</p>
+                        <p class="text-[11px] text-gray-600">인터넷 연결 상태를 확인 후 다시 시도해주세요.</p>
+                        <button onclick="retryLoadSamples()" class="wf-btn text-xs px-3 py-1">재시도</button>
+                    </div>
+                `;
+            } else {
+                renderListScreen();
+            }
+        }
+
+        // Toggle Bookmark
+        function toggleBookmark(id) {
+            const target = state.allQuestions.find(q => q.id === id);
+            if (target) {
+                target.bookmarked = !target.bookmarked;
+                updateUserData(target);
+                renderListScreen();
+                showToast(target.bookmarked ? '질문이 보관함에 추가되었습니다.' : '보관함에서 해제되었습니다.');
+            }
+        }
+
+        // Render Screen 3: Detail
+        function openQuestionDetail(id) {
+            state.activeQuestionId = id;
+            const q = state.allQuestions.find(item => item.id === id);
+            if (!q) return;
+
+            document.getElementById('detail-type-badge').innerText = q.category;
+            document.getElementById('detail-question-text').innerText = q.question;
+            document.getElementById('detail-intent-text').innerText = q.intent || '해당 직무의 실무 역량을 점검하는 질문입니다.';
+            document.getElementById('detail-memo-input').value = q.memo || '';
+            
+            const bmBtn = document.getElementById('detail-bookmark-btn');
+            bmBtn.innerHTML = `<i class="${q.bookmarked ? 'fa-solid fa-star text-black' : 'fa-regular fa-star text-gray-400'}"></i>`;
+
+            switchTab('detail');
+        }
+
+        function toggleDetailBookmark() {
+            if (!state.activeQuestionId) return;
+            toggleBookmark(state.activeQuestionId);
+            const q = state.allQuestions.find(item => item.id === state.activeQuestionId);
+            const bmBtn = document.getElementById('detail-bookmark-btn');
+            bmBtn.innerHTML = `<i class="${q.bookmarked ? 'fa-solid fa-star text-black' : 'fa-regular fa-star text-gray-400'}"></i>`;
+        }
+
+        function saveDetailMemo() {
+            if (!state.activeQuestionId) return;
+            const memoText = document.getElementById('detail-memo-input').value;
+            const q = state.allQuestions.find(item => item.id === state.activeQuestionId);
+            if (q) {
+                q.memo = memoText;
+                updateUserData(q);
+                showToast('답변 메모가 저장되었습니다.');
+            }
+        }
+
+        // Save Full Set Action
+        function saveCurrentInterviewSet() {
+            showToast('전체 질문 세트가 마이 보관함에 성공적으로 동기화되었습니다.');
+        }
+
+        // Render Screen 4: My Tab
+        function switchMySubTab(sub) {
+            state.mySubTab = sub;
+            document.getElementById('subtab-saved-content').classList.toggle('hidden', sub !== 'saved');
+            document.getElementById('subtab-practice-content').classList.toggle('hidden', sub !== 'practice');
+
+            const savedBtn = document.getElementById('subtab-btn-saved');
+            const practiceBtn = document.getElementById('subtab-btn-practice');
+
+            if (sub === 'saved') {
+                savedBtn.className = "flex-1 py-2 text-center border-t-2 border-l-2 border-r-2 border-black bg-black text-white";
+                practiceBtn.className = "flex-1 py-2 text-center border-b-2 border-transparent bg-gray-200 text-gray-700";
+            } else {
+                practiceBtn.className = "flex-1 py-2 text-center border-t-2 border-l-2 border-r-2 border-black bg-black text-white";
+                savedBtn.className = "flex-1 py-2 text-center border-b-2 border-transparent bg-gray-200 text-gray-700";
+            }
+
+            renderMyScreen();
+        }
+
+        function renderMyScreen() {
+            if (state.mySubTab === 'saved') {
+                const savedList = document.getElementById('my-saved-list');
+                const bookmarkedQuestions = state.allQuestions.filter(q => q.bookmarked);
+
+                if (bookmarkedQuestions.length === 0) {
+                    savedList.innerHTML = `
+                        <div class="wf-box p-8 text-center text-gray-500 space-y-3">
+                            <i class="fa-regular fa-bookmark text-3xl"></i>
+                            <div class="text-xs font-bold text-black">보관된 질문이 없습니다.</div>
+                            <p class="text-[11px]">질문 목록에서 ★ 별표를 눌러 나만의 질문함을 채워보세요.</p>
+                            <button onclick="switchTab('list')" class="wf-btn px-4 py-2 text-xs">질문 탐색하러 가기</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                savedList.innerHTML = bookmarkedQuestions.map(q => `
+                    <div class="wf-box p-3 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="wf-tag">${esc(q.category)}</span>
+                            <button onclick="toggleBookmark('${q.id}')" class="text-xs font-bold underline text-gray-500">삭제</button>
+                        </div>
+                        <p class="text-xs font-bold">${esc(q.question)}</p>
+                        ${q.memo ? `<div class="text-[11px] bg-gray-100 p-2 border border-gray-300 font-mono"><strong>내 답변:</strong> ${esc(q.memo)}</div>` : ''}
+                        <button onclick="openQuestionDetail('${q.id}')" class="wf-btn w-full py-1 text-xs mt-1">답변 수정 및 상세 보기</button>
+                    </div>
+                `).join('');
+            } else {
+                // Practice Flashcards Setup
+                state.flashcardIndex = 0;
+                state.flashcardFlipped = false;
+                updateFlashcardView();
+            }
+        }
+
+        function flipCard() {
+            state.flashcardFlipped = !state.flashcardFlipped;
+            updateFlashcardView();
+        }
+
+        function updateFlashcardView() {
+            const list = state.questions;
+            if (list.length === 0) return;
+
+            if (state.flashcardIndex >= list.length) state.flashcardIndex = 0;
+            if (state.flashcardIndex < 0) state.flashcardIndex = list.length - 1;
+
+            const current = list[state.flashcardIndex];
+            document.getElementById('fc-category-badge').innerText = current.category;
+            document.getElementById('fc-counter').innerText = `${state.flashcardIndex + 1} / ${list.length}`;
+
+            const sideIndicator = document.getElementById('fc-side-indicator');
+            const contentText = document.getElementById('fc-content-text');
+
+            if (!state.flashcardFlipped) {
+                sideIndicator.innerText = "FRONT (질문)";
+                sideIndicator.className = "font-bold text-black";
+                contentText.innerText = current.question;
+            } else {
+                sideIndicator.innerText = "BACK (답변 메모 & 가이드)";
+                sideIndicator.className = "font-bold text-gray-600";
+                contentText.innerHTML = current.memo ? 
+                    `<span class="font-mono text-sm text-left block bg-gray-100 p-3 border border-gray-300">${esc(current.memo)}</span>` : 
+                    `<span class="text-xs text-gray-400 italic">작성된 답변 메모가 없습니다.<br>상세 페이지에서 메모를 작성해보세요.</span>`;
+            }
+        }
+
+        function prevFlashcard() {
+            state.flashcardIndex--;
+            state.flashcardFlipped = false;
+            updateFlashcardView();
+        }
+
+        function nextFlashcard() {
+            state.flashcardIndex++;
+            state.flashcardFlipped = false;
+            updateFlashcardView();
+        }
+
+        // Annotation Visibility Toggle
+        function toggleAnnotations() {
+            state.annotationsOn = !state.annotationsOn;
+            document.body.className = state.annotationsOn ? 'show-annotations min-h-screen text-gray-900' : 'hide-annotations min-h-screen text-gray-900';
+            document.getElementById('annoToggleText').innerText = state.annotationsOn ? '주석 ON' : '주석 OFF';
+        }
+
+        // Toast Helper
+        function showToast(message) {
+            const toast = document.getElementById('toast-msg');
+            toast.innerText = message;
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
